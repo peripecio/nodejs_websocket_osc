@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>client_app</title>
+<style>
+	#containercanvas {
+		padding: 10px;
+		background-color: #CC3;
+	}
+
+	#videocap {
+		padding: 10px;
+		background-color: rgb(61, 170, 61);
+	}
+
+</style>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/processing.js" type="text/javascript"></script>
+<script type="text/javascript">
+	// convenience function to get the id attribute of generated sketch html element
+	function getProcessingSketchId () { return 'dibujajs'; }
+</script>
+</head>
+<body>
+	<div id="cabecera">
+		<h2 class="titulon">Prueba socket.io en node.js</p>
+	</div>
+	<div id="texto">
+		<p>Basado en este enlace: <a href="http://socket.io/#how-to-use">http://socket.io/#how-to-use</a></p>
+	</div>
+	<div id="statusmsg"></div>
+	<div id="dataSend">
+		<input id="valorSend" type="range" min="0" max="9" step="1">
+		<input id="btnSend" type="button" value="Enviar">
+	</div>
+
+	<div>
+		<canvas id="dibujajs" data-processing-sources="/js/dibuja_js.pde" 
+				width="400" height="400">
+			<p>Your browser does not support the canvas tag.</p>
+			<!-- Note: you can put any alternative content here. -->
+		</canvas>
+		<noscript>
+			<p>JavaScript is required to view the contents of this page.</p>
+		</noscript>
+		<input type="button" id="logPts" value="log puntos"></input>
+	</div>
+
+	<script language="javascript">
+
+		$(document).ready( function() {
+
+
+			function logPoints() {
+				var pjs = Processing.getInstanceById(getProcessingSketchId());
+			    var points = pjs.getPoints();
+			    console.log("*** SIZE:"+points.size());
+			    var jsonPts = [];
+			    for(var i=0; i<points.size(); i++) {
+//			    	console.log(i+"--"+points.get(i));
+			    	var pt = points.get(i);
+			    	jsonPts.push({x: pt.x, y: pt.y});
+			    }
+
+			    console.log(jsonPts);
+
+			    socket.emit('puntosWeb', {puntos: jsonPts});
+
+			}
+
+	//		var statusmsg = document.getElementById('statusmsg');
+			var statusmsg = $('#statusmsg');
+
+			var socket = io.connect('http://localhost', {port: 9093});
+
+			// Envio del dato del slider (test)
+			$('#btnSend').click(function() {
+				var valor = $('#valorSend').val();
+				console.log($('#valorSend').val());
+			    socket.emit('datosWeb', { valorDato: valor });
+			});
+
+			$('#logPts').click(function() {
+				logPoints();
+			})
+
+			// Envio del dato de processing
+			// $('#btnSend').click(function() {
+			// 	var valor = $('#valorSend').val();
+			// 	console.log($('#valorSend').val());
+			//     socket.emit('datosWeb', { valorDato: valor });
+			// });
+
+
+
+
+		});
+
+
+
+	</script>	
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>nodejs-socketio-nodeosc</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+	<div id="cabecera">
+		<h2 class="titulon">Test node.js + socket.io + node-osc</p>
+	</div>
+	<div id="texto">
+		<p><a href="http://socket.io/#how-to-use">http://socket.io/#how-to-use</a></p>
+		<p>Librerias:
+			<ul>
+				<li><a href="http://expressjs.com">express</a></li>
+				<li><a href="http://socket.io">socket.io</a></li>
+				<li><a href="https://github.com/TheAlphaNerd/node-osc">node-osc</a> (version de The alpha Nerd)</li>
+			</ul>
+		</p>
+		<p>Cliente web: <a href="./cli">CLIENTE</a></p>
+	</div>
+	<div>UltimoDato: <span id="ultDato">22</span></div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			var ultDato = $('#ultDato').html();
+			console.log("Ultimo Dato: " + ultDato);
+
+			var socket = io.connect('http://localhost', {port: 9093});
+			
+			socket.on('index_ultDato', function (data) {
+				$('#ultDato').html(data.ultimoDato);
+			    console.log(data);
+			});
+
+			socket.emit('index_newConn', {num:1});
+
+		});
+	</script>
+</body>
+</html>
