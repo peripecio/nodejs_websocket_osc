@@ -1,5 +1,14 @@
 Linea linea;
 
+JavaScript javascript;
+interface JavaScript {
+    void sendPoints();
+}
+void bindJavascript(JavaScript js) {
+    javascript = js;
+}
+
+
 
 void setup() {
   size(400,400);
@@ -13,6 +22,13 @@ void draw() {
   background(200);
   
   linea.draw();
+
+//  if(javascript!=null){
+//      text("Conectado a js", 10,10);
+//  }
+//  else {
+//      text("NO Conectado a js", 10,10);
+//  }
   
 }
 
@@ -24,7 +40,10 @@ void mouseDragged() {
   linea.addPt(mouseX, mouseY);
 }
 void mouseReleased() {
-
+// Llamar a una función de javascript
+  if(javascript!=null){
+      javascript.sendPoints();
+  }
 }
 
 // Para llamar desde js

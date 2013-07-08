@@ -24,17 +24,21 @@
 </script>
 </head>
 <body>
+<!--	
 	<div id="cabecera">
-		<h2 class="titulon">Prueba socket.io en node.js</p>
+		<h2 class="titulon">Test socket.io en node.js</p>
 	</div>
 	<div id="texto">
-		<p>Basado en este enlace: <a href="http://socket.io/#how-to-use">http://socket.io/#how-to-use</a></p>
+		<p><a href="http://socket.io/#how-to-use">http://socket.io/#how-to-use</a></p>
 	</div>
+-->
+<!--
 	<div id="statusmsg"></div>
 	<div id="dataSend">
 		<input id="valorSend" type="range" min="0" max="9" step="1">
 		<input id="btnSend" type="button" value="Enviar">
-	</div>
+	</div> 
+-->
 
 	<div>
 		<canvas id="dibujajs" data-processing-sources="/js/dibuja_js.pde" 
@@ -45,15 +49,13 @@
 		<noscript>
 			<p>JavaScript is required to view the contents of this page.</p>
 		</noscript>
-		<input type="button" id="logPts" value="log puntos"></input>
+<!--		<input type="button" id="sendPts" value="Enviar puntos"></input> -->
 	</div>
 
 	<script language="javascript">
 
-		$(document).ready( function() {
 
-
-			function logPoints() {
+			function sendPoints() {
 				var pjs = Processing.getInstanceById(getProcessingSketchId());
 			    var points = pjs.getPoints();
 			    console.log("*** SIZE:"+points.size());
@@ -65,26 +67,41 @@
 			    }
 
 			    console.log(jsonPts);
-
 			    socket.emit('puntosWeb', {puntos: jsonPts});
-
 			}
 
-	//		var statusmsg = document.getElementById('statusmsg');
-			var statusmsg = $('#statusmsg');
+
+			var bound = false;
+			function bindJavascript() {
+			    var pjs = Processing.getInstanceById(getProcessingSketchId());
+			    if(pjs!=null) {
+			      pjs.bindJavascript(this);
+			      bound = true;
+//			      console.log("CONECTADO A P5");
+			    }
+			    // Si no se ha conectado con el sketch de p5, reintentarlo en 250 ms.
+			    if(!bound) setTimeout(bindJavascript, 250);
+			}
+
+			bindJavascript();
+
+//			var statusmsg = $('#statusmsg');
 
 			var socket = io.connect('http://localhost', {port: 9093});
 
-			// Envio del dato del slider (test)
-			$('#btnSend').click(function() {
-				var valor = $('#valorSend').val();
-				console.log($('#valorSend').val());
-			    socket.emit('datosWeb', { valorDato: valor });
-			});
+		$(document).ready( function() {
+			
 
-			$('#logPts').click(function() {
-				logPoints();
-			})
+			// Envio del dato del slider (test)
+			// $('#btnSend').click(function() {
+			// 	var valor = $('#valorSend').val();
+			// 	console.log($('#valorSend').val());
+			//     socket.emit('datosWeb', { valorDato: valor });
+			// });
+
+			// $('#sendPts').click(function() {
+			// 	sendPoints();
+			// })
 
 			// Envio del dato de processing
 			// $('#btnSend').click(function() {
